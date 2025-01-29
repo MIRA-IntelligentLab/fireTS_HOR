@@ -83,8 +83,10 @@ class GeneralAutoRegressor(TimeSeriesRegressor, RegressorMixin):
                              n_exog_inputs)
         :param array-like y: target time series to predict, shape = (n_samples)
         """
+        print("Retrieving time delay features...")
         X, y = self._check_and_preprocess_X_y(X, y)
         features, target = self._preprocess_data(X, y)
+        print("Now fitting the base estimator...")
         self.base_estimator.fit(features, target, **params)
 
     def _preprocess_data(self, X, y):
