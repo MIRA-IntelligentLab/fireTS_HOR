@@ -145,8 +145,9 @@ class NARX(GeneralAutoRegressor):
             if cur_step == step - 1:
                 break
             # update regressors with the newly obtained values
-            auto_regressor.pop()
-            auto_regressor.appendleft(y_forecast[-1])
+            if len(auto_regressor) > 0:
+                auto_regressor.pop()
+                auto_regressor.appendleft(y_forecast[-1])
             for exog_reg, X_next in zip(exog_regressors, X_future[cur_step, :]):
                 exog_reg.pop()
                 exog_reg.appendleft(X_next)
