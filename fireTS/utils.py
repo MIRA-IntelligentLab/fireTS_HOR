@@ -62,9 +62,12 @@ class InputLagFeatureProcessor:
 
 class MetaLagFeatureProcessor(object):
     def __init__(self, X, y, auto_order, exog_order, exog_delay):
-        self._lag_feature_processors = [
-            OutputLagFeatureProcessor(y, auto_order)
-        ]
+        if auto_order == 0:
+            self._lag_feature_processors = []
+        else:
+            self._lag_feature_processors = [
+                OutputLagFeatureProcessor(y, auto_order)
+            ]
         self._lag_feature_processors.extend([
             InputLagFeatureProcessor(data, order, delay)
             for data, order, delay in zip(X.T, exog_order, exog_delay)
@@ -79,8 +82,8 @@ class MetaLagFeatureProcessor(object):
 
     def update(self, data_new):
         lag_feature_list = [
-            p.update(data_new) if i == 0 else p.update()
-            for i, p in enumerate(self._lag_feature_processors)
+            p.update(data_new) if isinstance(p, OutputLagFeatureProcessor)
+            else p.update() for i, p in enumerate(self._lag_feature_processors)
         ]
         lag_features = np.concatenate(lag_feature_list, axis=1)
         return lag_features
